@@ -1,0 +1,39 @@
+image: node:9.11.1
+
+stages:
+  - "Verification"
+  - "Publishing"
+
+Test Build:
+  stage: Verification
+  script: 
+    - npm install
+    - npm run build
+  cache:
+    paths:
+      - node_modules
+  artifacts:
+    paths:
+      - docs/.vuepress/dist
+    expire_in: 5 days
+  except:
+        - master
+
+
+pages:
+  stage: Publishing
+  cache:
+    paths:
+      - node_modules/
+  script:
+    - npm install
+    - npm run build
+    - mkdir public
+    - mv docs/.vuepress/dist/* public
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
+
+  only:
+    - master
